@@ -1,0 +1,917 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel Administrativo - Viaja Conmigo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header { 
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px 30px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-title h1 {
+      color: #2d3748;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .admin-badge {
+      background: linear-gradient(45deg, #ff6b00, #ff8533);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #ff6b00, #ff8533);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 107, 0, 0.3);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #4a5568;
+    }
+
+    .btn-secondary:hover {
+      background: #cbd5e0;
+    }
+
+    .btn-danger {
+      background: #e53e3e;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c53030;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(45deg, #4299e1, #3182ce);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.9;
+      text-transform: uppercase;
+    }
+
+    /* Formulario mejorado */
+    .form-section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .form-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 30px;
+      margin-top: 20px;
+    }
+
+    .form-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 14px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: #ff6b00;
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .price-group {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 10px;
+    }
+
+    /* Vista previa del paquete */
+    .package-preview {
+      position: sticky;
+      top: 20px;
+    }
+
+    .preview-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .preview-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .preview-image {
+      width: 100%;
+      height: 200px;
+      background: #f7fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #a0aec0;
+      font-size: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-content {
+      padding: 20px;
+    }
+
+    .preview-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+
+    .preview-description {
+      color: #718096;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .preview-price {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .price-tag {
+      background: linear-gradient(45deg, #ff6b00, #ff8533);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .preview-badge {
+      background: #e6fffa;
+      color: #319795;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Upload zone mejorada */
+    .upload-zone {
+      border: 2px dashed #cbd5e0;
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f7fafc;
+    }
+
+    .upload-zone:hover {
+      border-color: #ff6b00;
+      background: #fef5e7;
+    }
+
+    .upload-zone.dragover {
+      border-color: #ff6b00;
+      background: #fef5e7;
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      font-size: 48px;
+      color: #a0aec0;
+      margin-bottom: 15px;
+    }
+
+    .upload-text {
+      color: #4a5568;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .upload-subtext {
+      color: #a0aec0;
+      font-size: 12px;
+    }
+
+    /* Lista de paquetes mejorada */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .package-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .package-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .package-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .package-info {
+      padding: 15px;
+    }
+
+    .package-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+
+    .package-description {
+      color: #718096;
+      font-size: 13px;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .package-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .package-price {
+      font-weight: 700;
+      color: #ff6b00;
+      font-size: 16px;
+    }
+
+    .package-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+
+    /* Notificaciones mejoradas */
+    .notification {
+      background: linear-gradient(45deg, #48bb78, #38a169);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(300px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .notification-content h4 {
+      margin-bottom: 5px;
+      font-size: 16px;
+    }
+
+    .notification-content p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .notification-close {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .packages-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-title">
+        <h1>Panel Administrativo</h1>
+        <span class="admin-badge">Jefe de Ventas</span>
+      </div>
+      <button class="btn btn-secondary" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </header>
+
+    <div class="dashboard-grid">
+      <div class="main-content">
+        <!-- Estadísticas -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Dashboard</h2>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number" id="totalPaquetes">0</div>
+              <div class="stat-label">Paquetes Activos</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="totalVentas">0</div>
+              <div class="stat-label">Ventas Pendientes</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="ingresosMes">$0</div>
+              <div class="stat-label">Ingresos del Mes</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agregar Paquete -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Gestión de Paquetes</h2>
+            <button class="btn btn-primary" onclick="toggleFormSection()">
+              <span id="toggleText">+ Agregar Nuevo Paquete</span>
+            </button>
+          </div>
+
+          <div class="form-section" id="formSection">
+            <div class="form-grid">
+              <div class="form-fields">
+                <div class="form-group">
+                  <label class="form-label">Imagen Principal</label>
+                  <div class="upload-zone" onclick="document.getElementById('portadaInput').click()" 
+                       ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-text">Arrastra tu imagen aquí</div>
+                    <div class="upload-subtext">o haz clic para seleccionar</div>
+                  </div>
+                  <input type="file" id="portadaInput" style="display:none" accept="image/*" onchange="handleImageUpload(event)" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Nombre del Paquete</label>
+                  <input type="text" id="nombrePaquete" class="form-input" placeholder="Ej: Paquete a París" onkeyup="updatePreview()" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Descripción</label>
+                  <textarea id="descripcionPaquete" class="form-textarea" placeholder="Describe los detalles del paquete..." onkeyup="updatePreview()"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Precio</label>
+                  <div class="price-group">
+                    <select id="moneda" class="form-select" onchange="updatePreview()">
+                      <option value="USD">USD</option>
+                      <option value="ARS">ARS</option>
+                      <option value="EUR">EUR</option>
+                    </select>
+                    <input type="number" id="precio" class="form-input" placeholder="0.00" onkeyup="updatePreview()" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Fotos Adicionales</label>
+                  <input type="file" id="fotosAdicionales" class="form-input" multiple accept="image/*" />
+                </div>
+
+                <div style="display: flex; gap: 15px;">
+                  <button class="btn btn-primary" onclick="guardarPaquete()">Guardar Paquete</button>
+                  <button class="btn btn-secondary" onclick="cancelarFormulario()">Cancelar</button>
+                </div>
+              </div>
+
+              <div class="package-preview">
+                <h3 style="margin-bottom: 15px; color: #2d3748;">Vista Previa</h3>
+                <div class="preview-card">
+                  <div class="preview-image" id="previewImage">
+                    <span>Sin imagen</span>
+                  </div>
+                  <div class="preview-content">
+                    <div class="preview-title" id="previewTitle">Nombre del paquete</div>
+                    <div class="preview-description" id="previewDescription">Descripción del paquete...</div>
+                    <div class="preview-price">
+                      <div class="price-tag" id="previewPrice">USD 0</div>
+                      <div class="preview-badge">Nuevo</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de Paquetes -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Paquetes Publicados</h2>
+          </div>
+          <div class="packages-grid" id="paquetesContainer">
+            <!-- Los paquetes se cargarán aquí -->
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <!-- Notificaciones de Ventas -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Notificaciones</h2>
+          </div>
+          <div id="notificacionesContainer">
+            <p style="color: #a0aec0; text-align: center;">No hay notificaciones</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para ver fotos -->
+  <div class="modal" id="modalFotos" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center;">
+    <div style="background: white; padding: 20px; border-radius: 15px; max-width: 90%; max-height: 90%; position: relative;">
+      <button style="position: absolute; top: 10px; right: 15px; background: #e53e3e; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;" onclick="cerrarModal()">×</button>
+      <div id="carouselFotos" style="display: flex; overflow-x: auto; gap: 10px; padding: 20px 0;">
+        <!-- Las fotos se cargarán aquí -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      deleteDoc,
+      doc,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      getStorage,
+      ref,
+      uploadBytes,
+      getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAvRLk5N1vQeZBD4HXQ1zGYHc9sYvs",
+      authDomain: "paquetes-f982a.firebaseapp.com",
+      projectId: "paquetes-f982a",
+      storageBucket: "paquetes-f982a.appspot.com",
+      messagingSenderId: "336790165649",
+      appId: "1:336790165649:web:75d96bfa7c89b44b84a8a8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const paquetesRef = collection(db, "paquetes");
+    const ventasRef = collection(db, "ventas");
+
+    let archivoPortada = null;
+    let paquetesCount = 0;
+    let ventasCount = 0;
+
+    // Verificar autenticación
+    window.onload = () => {
+      const usuario = JSON.parse(localStorage.getItem('usuarioActivo'));
+      if (!usuario || usuario.rol !== 'jefe') {
+        alert("No tienes permiso para esta página.");
+        window.location.href = 'inicio1.html';
+        return;
+      }
+      
+      cargarDatos();
+    };
+
+    function cargarDatos() {
+      // Cargar paquetes
+      onSnapshot(paquetesRef, snapshot => {
+        paquetesCount = snapshot.size;
+        document.getElementById('totalPaquetes').textContent = paquetesCount;
+        
+        const container = document.getElementById('paquetesContainer');
+        container.innerHTML = '';
+        
+        snapshot.forEach(docSnap => {
+          const p = docSnap.data();
+          const card = document.createElement('div');
+          card.className = 'package-card';
+          card.innerHTML = `
+            <img src="${p.portada}" class="package-image" alt="${p.nombre}" />
+            <div class="package-info">
+              <div class="package-name">${p.nombre}</div>
+              <div class="package-description">${(p.descripcion || '').substring(0, 80)}...</div>
+              <div class="package-footer">
+                <div class="package-price">${p.moneda || 'USD'} ${p.precio}</div>
+                <div class="package-actions">
+                  ${p.fotos && p.fotos.length > 0 ? 
+                    `<button class="btn btn-secondary btn-small" onclick='verFotos(${JSON.stringify(p.fotos)})'>Ver Fotos</button>` : ''}
+                  <button class="btn btn-danger btn-small" onclick="eliminarPaquete('${docSnap.id}')">Eliminar</button>
+                </div>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      });
+
+      // Cargar notificaciones de ventas
+      onSnapshot(ventasRef, snapshot => {
+        ventasCount = snapshot.size;
+        document.getElementById('totalVentas').textContent = ventasCount;
+        
+        const container = document.getElementById('notificacionesContainer');
+        container.innerHTML = '';
+        
+        if (snapshot.empty) {
+          container.innerHTML = '<p style="color: #a0aec0; text-align: center;">No hay notificaciones</p>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const v = doc.data();
+          const notif = document.createElement('div');
+          notif.className = 'notification';
+          notif.innerHTML = `
+            <div class="notification-content">
+              <h4>Nueva Venta 🎉</h4>
+              <p><strong>Cliente:</strong> ${v.cliente}</p>
+              <p><strong>Paquete:</strong> ${v.paquete}</p>
+              <p><strong>Fecha:</strong> ${v.fecha}</p>
+            </div>
+            <button class="notification-close" onclick="eliminarNotificacion('${doc.id}')">Marcar como leída</button>
+          `;
+          container.appendChild(notif);
+        });
+      });
+    }
+
+    // Funciones globales
+    window.cerrarSesion = () => {
+      localStorage.removeItem('usuarioActivo');
+      window.location.href = 'inicio1.html';
+    };
+
+    window.toggleFormSection = () => {
+      const section = document.getElementById('formSection');
+      const text = document.getElementById('toggleText');
+      
+      if (section.classList.contains('active')) {
+        section.classList.remove('active');
+        text.textContent = '+ Agregar Nuevo Paquete';
+      } else {
+        section.classList.add('active');
+        text.textContent = '- Ocultar Formulario';
+      }
+    };
+
+    window.updatePreview = () => {
+      const nombre = document.getElementById('nombrePaquete').value || 'Nombre del paquete';
+      const descripcion = document.getElementById('descripcionPaquete').value || 'Descripción del paquete...';
+      const moneda = document.getElementById('moneda').value;
+      const precio = document.getElementById('precio').value || '0';
+      
+      document.getElementById('previewTitle').textContent = nombre;
+      document.getElementById('previewDescription').textContent = descripcion;
+      document.getElementById('previewPrice').textContent = `${moneda} ${precio}`;
+    };
+
+    window.handleImageUpload = (event) => {
+      archivoPortada = event.target.files[0];
+      if (archivoPortada) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const previewImage = document.getElementById('previewImage');
+          previewImage.innerHTML = `<img src="${e.target.result}" alt="Preview" />`;
+        };
+        reader.readAsDataURL(archivoPortada);
+      }
+    };
+
+    window.handleDragOver = (event) => {
+      event.preventDefault();
+      event.currentTarget.classList.add('dragover');
+    };
+
+    window.handleDragLeave = (event) => {
+      event.currentTarget.classList.remove('dragover');
+    };
+
+    window.handleDrop = (event) => {
+      event.preventDefault();
+      event.currentTarget.classList.remove('dragover');
+      
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        archivoPortada = files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const previewImage = document.getElementById('previewImage');
+          previewImage.innerHTML = `<img src="${e.target.result}" alt="Preview" />`;
+        };
+        reader.readAsDataURL(archivoPortada);
+      }
+    };
+
+    window.guardarPaquete = async () => {
+      const nombre = document.getElementById('nombrePaquete').value;
+      const descripcion = document.getElementById('descripcionPaquete').value;
+      const moneda = document.getElementById('moneda').value;
+      const precio = document.getElementById('precio').value;
+      const adicionalesInput = document.getElementById('fotosAdicionales');
+      const archivosAdicionales = adicionalesInput.files;
+
+      if (!archivoPortada || !nombre || !precio) {
+        alert("Por favor completa todos los campos obligatorios.");
+        return;
+      }
+
+      try {
+        // Subir imagen principal
+        const nombreArchivo = `portadas/${Date.now()}_${archivoPortada.name}`;
+        const storageRef = ref(storage, nombreArchivo);
+        await uploadBytes(storageRef, archivoPortada);
+        const urlPortada = await getDownloadURL(storageRef);
+
+        // Subir fotos adicionales
+        const urlsAdicionales = [];
+        for (let i = 0; i < archivosAdicionales.length; i++) {
+          const archivo = archivosAdicionales[i];
+          const refAdicional = ref(storage, `fotosAdicionales/${Date.now()}_${archivo.name}`);
+          await uploadBytes(refAdicional, archivo);
+          const url = await getDownloadURL(refAdicional);
+          urlsAdicionales.push(url);
+        }
+
+        // Guardar en Firestore
+        await addDoc(paquetesRef, {
+          nombre,
+          descripcion,
+          moneda,
+          precio: parseFloat(precio),
+          portada: urlPortada,
+          fotos: urlsAdicionales,
+          fechaCreacion: new Date().toISOString()
+        });
+
+        alert('Paquete guardado exitosamente!');
+        cancelarFormulario();
+      } catch (error) {
+        console.error('Error al guardar paquete:', error);
+        alert('Error al guardar el paquete. Inténtalo de nuevo.');
+      }
+    };
+
+    window.cancelarFormulario = () => {
+      // Limpiar formulario
+      document.getElementById('nombrePaquete').value = '';
+      document.getElementById('descripcionPaquete').value = '';
+      document.getElementById('precio').value = '';
+      document.getElementById('portadaInput').value = '';
+      document.getElementById('fotosAdicionales').value = '';
+      
+      // Resetear preview
+      document.getElementById('previewImage').innerHTML = '<span>Sin imagen</span>';
+      document.getElementById('previewTitle').textContent = 'Nombre del paquete';
+      document.getElementById('previewDescription').textContent = 'Descripción del paquete...';
+      document.getElementById('previewPrice').textContent = 'USD 0';
+      
+      archivoPortada = null;
+      
+      // Ocultar formulario
+      const section = document.getElementById('formSection');
+      const text = document.getElementById('toggleText');
+      section.classList.remove('active');
+      text.textContent = '+ Agregar Nuevo Paquete';
+    };
+
+    window.eliminarPaquete = async (id) => {
+      if (confirm("¿Estás seguro de que quieres eliminar este paquete?")) {
+        try {
+          await deleteDoc(doc(db, "paquetes", id));
+          alert('Paquete eliminado exitosamente!');
+        } catch (error) {
+          console.error('Error al eliminar paquete:', error);
+          alert('Error al eliminar el paquete.');
+        }
+      }
+    };
+
+    window.eliminarNotificacion = async (id) => {
+      try {
+        await deleteDoc(doc(db, "ventas", id));
+      } catch (error) {
+        console.error('Error al eliminar notificación:', error);
+      }
+    };
+
+    window.verFotos = (fotos) => {
+      const modal = document.getElementById("modalFotos");
+      const carousel = document.getElementById("carouselFotos");
+      carousel.innerHTML = fotos.map(url => `<img src="${url}" style="height: 300px; border-radius: 8px;" alt="Foto del paquete">`).join('');
+      modal.style.display = "flex";
+    };
+
+    window.cerrarModal = () => {
+      document.getElementById("modalFotos").style.display = "none";
+    };
+  </script>
+</body>
+</html>
