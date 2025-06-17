@@ -1,0 +1,2415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cliente - Viaja Conmigo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #ff6b00;
+      --primary-light: #ff8533;
+      --primary-dark: #e55a00;
+      --secondary: #3b82f6;
+      --dark: #333;
+      --light: #f8f9fa;
+      --gray: #6c757d;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #fffbfb 0%, #f8f4f4 100%);
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    header { 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white; 
+      padding: 15px 25px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .moneda-selector {
+      background: white;
+      color: var(--primary);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+    
+    .moneda-selector:hover {
+      background: #ffedd5;
+    }
+    
+    .btn-logout {
+      background: white; 
+      border: none; 
+      color: var(--primary); 
+      padding: 10px 20px; 
+      border-radius: 25px; 
+      cursor: pointer; 
+      font-weight: bold; 
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-logout:hover { 
+      background: #ffb266; 
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    
+    main { 
+      padding: 25px; 
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .contenido {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 25px;
+    }
+    
+    .filtros-container {
+      flex: 1;
+      min-width: 300px;
+      max-width: 350px;
+    }
+    
+    .filtros-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .filtros-header h2 {
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+    
+    .btn-toggle-filtros {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+    }
+    
+    .filtros {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+    }
+    
+    .filtro-grupo {
+      margin-bottom: 25px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 20px;
+    }
+    
+    .filtro-grupo:last-child {
+      border-bottom: none;
+    }
+    
+    .filtro-grupo h3 {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .filtro-grupo label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 0.9rem;
+    }
+    
+    .categoria-selector {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .categoria-btn {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      padding: 12px 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .categoria-btn:hover, .categoria-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .categoria-btn i {
+      font-size: 1.2rem;
+    }
+    
+    .filtro-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0f0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+      background: #f9f9ff;
+      margin-bottom: 12px;
+    }
+    
+    .filtro-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+    }
+    
+    .filtro-select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0f0;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #f9f9ff;
+      margin-bottom: 12px;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff6b00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1em;
+    }
+    
+    .rango-precio {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .rango-precio .filtro-input {
+      flex: 1;
+    }
+    
+    .servicios-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    
+    .servicio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .servicio-option input {
+      width: 18px;
+      height: 18px;
+    }
+    
+    .btn-filtrar {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .btn-filtrar:hover {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, #e6741f 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+    }
+    
+    .btn-limpiar {
+      width: 100%;
+      background: var(--gray);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-limpiar:hover {
+      background: #5a6268;
+    }
+    
+    .resultados-container {
+      flex: 3;
+      min-width: 350px;
+    }
+    
+    .resultados-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .contador-resultados {
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 1.1rem;
+    }
+    
+    .controles-resultados {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .ordenar-select {
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: white;
+      font-weight: 500;
+    }
+    
+    .paquetes-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+      gap: 25px; 
+    }
+    
+    .paquete { 
+      background: white; 
+      border-radius: 15px; 
+      padding: 20px; 
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
+      transition: all 0.3s ease;
+      border: 1px solid #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    
+    .paquete:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .portada-preview { 
+      width: 100%; 
+      height: 200px; 
+      object-fit: cover; 
+      border-radius: 10px; 
+      margin-bottom: 15px;
+    }
+    
+    .paquete-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    
+    .paquete-titulo {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    
+    .servicio-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .servicio-paquete { background: #ffedd5; color: #f97316; }
+    .servicio-combo { background: #dbeafe; color: #3b82f6; }
+    .servicio-actividad { background: #dcfce7; color: #22c55e; }
+    .servicio-hospedaje { background: #fae8ff; color: #d946ef; }
+    .servicio-vuelo { background: #ffedd5; color: #f97316; }
+    .servicio-auto { background: #d1fae5; color: #10b981; }
+    
+    .paquete-info {
+      margin-bottom: 15px;
+      flex-grow: 1;
+    }
+    
+    .paquete-info p {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .paquete-precio {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+    
+    .paquete-acciones {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-top: auto;
+    }
+    
+    .btn-add-cart {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    
+    .btn-add-cart:hover {
+      background: var(--primary-dark);
+    }
+    
+    .btn-fotos {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      width: 45px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .btn-fotos:hover {
+      background: #2563eb;
+    }
+    
+    .calificacion {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 10px;
+    }
+    
+    .calificacion i {
+      color: #ffc107;
+      font-size: 0.9rem;
+    }
+    
+    .no-resultados {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      grid-column: 1 / -1;
+    }
+    
+    .no-resultados h3 {
+      color: #666;
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+    }
+    
+    .no-resultados p {
+      color: #999;
+      font-size: 1.1rem;
+    }
+    
+    /* ================== MEJORAS PARA EL CARRITO ================== */
+    .nav-tabs {
+      display: flex;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 25px 0;
+      overflow: hidden;
+    }
+    
+    .nav-tab {
+      flex: 1;
+      text-align: center;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 3px solid transparent;
+    }
+    
+    .nav-tab.active {
+      border-bottom: 3px solid var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    .nav-tab:hover:not(.active) {
+      background: #f8f9fa;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* Nuevo sistema de pasos para el carrito */
+    .checkout-steps {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
+    .checkout-steps::before {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: #e0e0e0;
+      z-index: 1;
+    }
+    
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      flex: 1;
+    }
+    
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+    
+    .step.active .step-number {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .step.completed .step-number {
+      background: var(--success);
+      color: white;
+    }
+    
+    .step-label {
+      font-size: 0.9rem;
+      text-align: center;
+      color: #666;
+    }
+    
+    .step.active .step-label {
+      color: var(--primary);
+      font-weight: 500;
+    }
+    
+    .step-content {
+      display: none;
+    }
+    
+    .step-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .step-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    .step-btn {
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+      border: none;
+      min-width: 150px;
+      justify-content: center;
+    }
+    
+    .btn-prev {
+      background: #f1f5f9;
+      color: var(--dark);
+    }
+    
+    .btn-prev:hover {
+      background: #e2e8f0;
+    }
+    
+    .btn-next, .btn-confirm {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-next:hover, .btn-confirm:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+    }
+    
+    .btn-complete {
+      background: var(--success);
+      color: white;
+    }
+    
+    .btn-complete:hover {
+      background: #16a34a;
+    }
+    
+    /* Estilos para la sección de carrito */
+    .cart-container {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #eee;
+    }
+    
+    .cart-header h2 {
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .cart-items {
+      margin-bottom: 25px;
+    }
+    
+    .cart-item {
+      display: flex;
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      transition: all 0.3s;
+    }
+    
+    .cart-item:hover {
+      background: #f9f9ff;
+    }
+    
+    .item-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-right: 20px;
+    }
+    
+    .item-details {
+      flex: 1;
+    }
+    
+    .item-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+      font-size: 1.1rem;
+    }
+    
+    .item-price {
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    .item-actions {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .btn-quantity {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-quantity:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .quantity {
+      min-width: 30px;
+      text-align: center;
+    }
+    
+    .btn-remove {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .btn-remove:hover {
+      background: #dc2626;
+    }
+    
+    .cart-summary {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .summary-total {
+      font-weight: 700;
+      font-size: 1.2rem;
+      border-top: 2px solid #eee;
+      padding-top: 15px;
+      margin-top: 10px;
+      color: var(--primary);
+    }
+    
+    .cart-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+    }
+    
+    .btn {
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+      border: none;
+    }
+    
+    .btn-continue {
+      background: #f1f5f9;
+      color: var(--dark);
+    }
+    
+    .btn-continue:hover {
+      background: #e2e8f0;
+    }
+    
+    .btn-checkout {
+      background: var(--success);
+      color: white;
+    }
+    
+    .btn-checkout:hover {
+      background: #16a34a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+    }
+    
+    /* Estilos para las secciones del proceso de compra */
+    .checkout-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+    
+    .checkout-form {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    
+    .form-section {
+      margin-bottom: 30px;
+    }
+    
+    .form-section h3 {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f1f5f9;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #555;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+    }
+    
+    .form-full {
+      grid-column: 1 / -1;
+    }
+    
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .payment-method {
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .payment-method.selected {
+      border-color: var(--primary);
+      background: #fffaf5;
+    }
+    
+    .payment-method i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #555;
+    }
+    
+    .payment-method.selected i {
+      color: var(--primary);
+    }
+    
+    .payment-method span {
+      font-weight: 500;
+    }
+    
+    .checkout-summary {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      padding: 30px;
+      align-self: start;
+      position: sticky;
+      top: 100px;
+    }
+    
+    .summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #eee;
+    }
+    
+    .summary-header h3 {
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .summary-items {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .summary-price {
+      font-weight: 600;
+    }
+    
+    .summary-totals {
+      padding-top: 15px;
+      margin-top: 15px;
+      border-top: 2px solid #eee;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .final-total {
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: var(--primary);
+    }
+    
+    .btn-complete {
+      background: var(--primary);
+      color: white;
+      width: 100%;
+      padding: 15px;
+      font-size: 1.1rem;
+      margin-top: 20px;
+    }
+    
+    .btn-complete:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 107, 0, 0.3);
+    }
+    
+    .history-container {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      padding: 25px;
+    }
+    
+    .history-filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    
+    .history-filter {
+      background: #f1f5f9;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    
+    .history-filter.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .history-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+    
+    .history-item:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .history-id {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .history-date {
+      color: #64748b;
+    }
+    
+    .history-status {
+      background: #dcfce7;
+      color: #166534;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .history-items {
+      margin-bottom: 15px;
+    }
+    
+    .history-item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+    
+    .history-total {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.1rem;
+      padding-top: 15px;
+      border-top: 1px solid #f1f5f9;
+      margin-top: 10px;
+    }
+    
+    .filtro-avanzado-toggle {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 0;
+      margin-bottom: 15px;
+    }
+    
+    .filtros-avanzados {
+      display: none;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+      margin-top: 15px;
+    }
+    
+    .filtros-avanzados.visible {
+      display: block;
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+      .categoria-selector {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .checkout-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .checkout-summary {
+        position: static;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .contenido {
+        flex-direction: column;
+      }
+      
+      .filtros-container {
+        max-width: 100%;
+      }
+      
+      .filtros {
+        position: static;
+      }
+      
+      .btn-toggle-filtros {
+        display: block;
+      }
+      
+      .filtros {
+        display: none;
+      }
+      
+      .filtros.visible {
+        display: block;
+      }
+      
+      .servicios-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .resultados-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .controles-resultados {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .payment-methods {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .nav-tabs {
+        flex-wrap: wrap;
+      }
+      
+      .nav-tab {
+        flex: 0 0 33.333%;
+      }
+
+      .step-label {
+        font-size: 0.8rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .categoria-selector {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .paquetes-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header-controls {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .payment-methods {
+        grid-template-columns: 1fr;
+      }
+      
+      .nav-tab {
+        flex: 0 0 50%;
+      }
+
+      .step-actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .step-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header> 
+    <h1><i class="fas fa-suitcase-rolling"></i> Viaja Conmigo</h1>
+    <div class="header-controls">
+      <span id="nombreUsuario">Bienvenido, Cliente</span>
+      <select id="selectorMoneda" class="moneda-selector">
+        <option value="USD">USD $</option>
+        <option value="EUR">EUR €</option>
+        <option value="MXN">MXN $</option>
+        <option value="COP">COP $</option>
+      </select>
+      <button id="btnLogout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="nav-tabs">
+      <div class="nav-tab active" data-tab="explorar">Explorar Servicios</div>
+      <div class="nav-tab" data-tab="cart">Carrito de Compras</div>
+      <div class="nav-tab" data-tab="checkout">Proceso de Compra</div>
+      <div class="nav-tab" data-tab="history">Historial de Compras</div>
+    </div>
+    
+    <!-- Explorar Servicios -->
+    <div id="explorar" class="tab-content active">
+      <div class="contenido">
+        <!-- Sección de Filtros -->
+        <div class="filtros-container">
+          <div class="filtros-header">
+            <h2><i class="fas fa-filter"></i> Filtros</h2>
+            <button class="btn-toggle-filtros" id="btnToggleFiltros">
+              <i class="fas fa-sliders-h"></i>
+            </button>
+          </div>
+          
+          <div class="filtros" id="filtrosSection">
+            <div class="filtro-grupo">
+              <h3><i class="fas fa-layer-group"></i> Tipo de Servicio</h3>
+              <div class="categoria-selector">
+                <div class="categoria-btn active" data-categoria="todos">
+                  <i class="fas fa-globe"></i>
+                  <span>Todos</span>
+                </div>
+                <div class="categoria-btn" data-categoria="paquete">
+                  <i class="fas fa-suitcase"></i>
+                  <span>Paquetes</span>
+                </div>
+                <div class="categoria-btn" data-categoria="combo">
+                  <i class="fas fa-gift"></i>
+                  <span>Combos</span>
+                </div>
+                <div class="categoria-btn" data-categoria="actividad">
+                  <i class="fas fa-hiking"></i>
+                  <span>Actividades</span>
+                </div>
+                <div class="categoria-btn" data-categoria="hospedaje">
+                  <i class="fas fa-hotel"></i>
+                  <span>Hospedajes</span>
+                </div>
+                <div class="categoria-btn" data-categoria="vuelo">
+                  <i class="fas fa-plane"></i>
+                  <span>Vuelos</span>
+                </div>
+                <div class="categoria-btn" data-categoria="auto">
+                  <i class="fas fa-car"></i>
+                  <span>Autos</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="filtro-grupo">
+              <h3><i class="fas fa-search-location"></i> Destino</h3>
+              <input type="text" id="filtroDestino" class="filtro-input" placeholder="Ej: París, Bali...">
+            </div>
+            
+            <div class="filtro-grupo">
+              <h3><i class="fas fa-route"></i> Tipo de Viaje</h3>
+              <select id="filtroTipo" class="filtro-select">
+                <option value="">Todos los tipos</option>
+                <option value="Aventura">Aventura</option>
+                <option value="Playa">Playa</option>
+                <option value="Cultural">Cultural</option>
+                <option value="Romántico">Romántico</option>
+                <option value="Familiar">Familiar</option>
+                <option value="Negocios">Negocios</option>
+              </select>
+            </div>
+            
+            <button class="filtro-avanzado-toggle" id="toggleAvanzado">
+              <i class="fas fa-chevron-down"></i> Filtros Avanzados
+            </button>
+            
+            <div class="filtros-avanzados" id="filtrosAvanzados">
+              <div class="filtro-grupo">
+                <h3><i class="fas fa-money-bill-wave"></i> Precio</h3>
+                <div class="rango-precio">
+                  <input type="number" id="filtroPrecioMin" class="filtro-input" placeholder="Mínimo" min="0">
+                  <span>a</span>
+                  <input type="number" id="filtroPrecioMax" class="filtro-input" placeholder="Máximo" min="0">
+                </div>
+              </div>
+              
+              <div class="filtro-grupo">
+                <h3><i class="fas fa-clock"></i> Duración</h3>
+                <div class="rango-precio">
+                  <input type="number" id="filtroDuracionMin" class="filtro-input" placeholder="Mín días" min="0">
+                  <span>a</span>
+                  <input type="number" id="filtroDuracionMax" class="filtro-input" placeholder="Máx días" min="0">
+                </div>
+              </div>
+              
+              <div class="filtro-grupo">
+                <h3><i class="fas fa-calendar-alt"></i> Fechas</h3>
+                <label>Fecha de inicio desde:</label>
+                <input type="date" id="filtroFechaInicio" class="filtro-input">
+              </div>
+              
+              <div class="filtro-grupo">
+                <h3><i class="fas fa-star"></i> Calificación</h3>
+                <select id="filtroCalificacion" class="filtro-select">
+                  <option value="0">Todas las calificaciones</option>
+                  <option value="4">4 estrellas o más</option>
+                  <option value="3">3 estrellas o más</option>
+                  <option value="2">2 estrellas o más</option>
+                  <option value="1">1 estrella o más</option>
+                </select>
+              </div>
+              
+              <div class="filtro-grupo">
+                <h3><i class="fas fa-concierge-bell"></i> Servicios Incluidos</h3>
+                <div class="servicios-grid">
+                  <div class="servicio-option">
+                    <input type="checkbox" id="servicioDesayuno">
+                    <label for="servicioDesayuno">Desayuno</label>
+                  </div>
+                  <div class="servicio-option">
+                    <input type="checkbox" id="servicioWifi">
+                    <label for="servicioWifi">Wi-Fi</label>
+                  </div>
+                  <div class="servicio-option">
+                    <input type="checkbox" id="servicioPiscina">
+                    <label for="servicioPiscina">Piscina</label>
+                  </div>
+                  <div class="servicio-option">
+                    <input type="checkbox" id="servicioGimnasio">
+                    <label for="servicioGimnasio">Gimnasio</label>
+                  </div>
+                  <div class="servicio-option">
+                    <input type="checkbox" id="servicioTraslado">
+                    <label for="servicioTraslado">Traslado</label>
+                  </div>
+                  <div class="servicio-option">
+                    <input type="checkbox" id="servicioTour">
+                    <label for="servicioTour">Tour guiado</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="filtro-grupo">
+                <h3><i class="fas fa-building"></i> Proveedor</h3>
+                <select id="filtroProveedor" class="filtro-select">
+                  <option value="">Todos los proveedores</option>
+                  <option value="Aventuras SA">Aventuras SA</option>
+                  <option value="Travel Experts">Travel Experts</option>
+                  <option value="Vacaciones Premium">Vacaciones Premium</option>
+                  <option value="Viajes Económicos">Viajes Económicos</option>
+                </select>
+              </div>
+            </div>
+            
+            <button class="btn-filtrar" id="btnFiltrar">
+              <i class="fas fa-filter"></i> Aplicar Filtros
+            </button>
+            <button class="btn-limpiar" id="btnLimpiar">
+              <i class="fas fa-broom"></i> Limpiar Filtros
+            </button>
+          </div>
+        </div>
+
+        <!-- Sección de Resultados -->
+        <div class="resultados-container">
+          <div class="resultados-header">
+            <div class="contador-resultados" id="contadorResultados">6 servicios encontrados</div>
+            <div class="controles-resultados">
+              <label>Ordenar por: </label>
+              <select class="ordenar-select" id="ordenarSelect">
+                <option value="relevancia">Relevancia</option>
+                <option value="precio-asc">Precio: Menor a Mayor</option>
+                <option value="precio-desc">Precio: Mayor a Menor</option>
+                <option value="duracion-asc">Duración: Corto a Largo</option>
+                <option value="duracion-desc">Duración: Largo a Corto</option>
+                <option value="calificacion-desc">Mejor Calificación</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="paquetes-grid" id="resultados">
+            <!-- Los resultados se cargarán aquí dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Carrito de Compras -->
+    <div id="cart" class="tab-content">
+      <div class="cart-container">
+        <div class="cart-header">
+          <h2><i class="fas fa-shopping-cart"></i> Tu Carrito</h2>
+          <span id="cart-count">0 servicios seleccionados</span>
+        </div>
+        
+        <div class="cart-items" id="carritoContenido">
+          <!-- Los productos del carrito se cargarán aquí -->
+        </div>
+        
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="cart-subtotal">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Descuento:</span>
+            <span id="cart-discount">-$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Impuestos:</span>
+            <span id="cart-taxes">$0.00</span>
+          </div>
+          <div class="summary-row summary-total">
+            <span>Total:</span>
+            <span id="cart-total">$0.00</span>
+          </div>
+        </div>
+        
+        <div class="cart-actions">
+          <button class="btn btn-continue" id="btnContinueShopping">
+            <i class="fas fa-arrow-left"></i> Seguir Explorando
+          </button>
+          <button class="btn btn-checkout" id="goToCheckout">
+            <i class="fas fa-credit-card"></i> Proceder al Pago
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Proceso de Compra (ahora con pasos) -->
+    <div id="checkout" class="tab-content">
+      <div class="cart-container">
+        <div class="checkout-steps">
+          <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">Información</div>
+          </div>
+          <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">Pago</div>
+          </div>
+          <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">Confirmación</div>
+          </div>
+        </div>
+        
+        <!-- Paso 1: Información Personal -->
+        <div class="step-content active" id="step-content-1">
+          <div class="checkout-form">
+            <div class="form-section">
+              <h3><i class="fas fa-user"></i> Información Personal</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Nombre</label>
+                  <input type="text" class="form-control" value="Juan" placeholder="Nombre">
+                </div>
+                <div class="form-group">
+                  <label>Apellido</label>
+                  <input type="text" class="form-control" value="Pérez" placeholder="Apellido">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Correo Electrónico</label>
+                  <input type="email" class="form-control" value="juan.perez@email.com" placeholder="Correo electrónico">
+                </div>
+                <div class="form-group">
+                  <label>Teléfono</label>
+                  <input type="tel" class="form-control" value="+1 234 567 890" placeholder="Teléfono">
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <h3><i class="fas fa-map-marker-alt"></i> Dirección de Facturación</h3>
+              <div class="form-group form-full">
+                <label>Dirección</label>
+                <input type="text" class="form-control" value="Av. Principal 123" placeholder="Dirección completa">
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Ciudad</label>
+                  <input type="text" class="form-control" value="Madrid" placeholder="Ciudad">
+                </div>
+                <div class="form-group">
+                  <label>Código Postal</label>
+                  <input type="text" class="form-control" value="28001" placeholder="Código postal">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>País</label>
+                  <select class="form-control">
+                    <option>España</option>
+                    <option>México</option>
+                    <option>Argentina</option>
+                    <option>Colombia</option>
+                    <option>Estados Unidos</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Región/Estado</label>
+                  <input type="text" class="form-control" value="Madrid" placeholder="Región/Estado">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Paso 2: Método de Pago -->
+        <div class="step-content" id="step-content-2">
+          <div class="checkout-form">
+            <div class="form-section">
+              <h3><i class="fas fa-credit-card"></i> Método de Pago</h3>
+              <div class="payment-methods">
+                <div class="payment-method selected">
+                  <i class="fab fa-cc-visa"></i>
+                  <span>Tarjeta de Crédito</span>
+                </div>
+                <div class="payment-method">
+                  <i class="fab fa-paypal"></i>
+                  <span>PayPal</span>
+                </div>
+                <div class="payment-method">
+                  <i class="fas fa-money-bill-wave"></i>
+                  <span>Transferencia</span>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Nombre en la Tarjeta</label>
+                  <input type="text" class="form-control" placeholder="Nombre completo">
+                </div>
+                <div class="form-group">
+                  <label>Número de Tarjeta</label>
+                  <input type="text" class="form-control" placeholder="1234 5678 9012 3456">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Fecha de Expiración</label>
+                  <input type="text" class="form-control" placeholder="MM/AA">
+                </div>
+                <div class="form-group">
+                  <label>CVV</label>
+                  <input type="text" class="form-control" placeholder="123">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Paso 3: Confirmación -->
+        <div class="step-content" id="step-content-3">
+          <div class="checkout-form">
+            <div class="form-section">
+              <h3><i class="fas fa-check-circle"></i> Confirmar Compra</h3>
+              <div class="form-group">
+                <h4>Resumen de tu pedido</h4>
+                <div id="resumen-pedido">
+                  <!-- Resumen dinámico se cargará aquí -->
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>
+                  <input type="checkbox" checked> 
+                  Acepto los <a href="#">términos y condiciones</a>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="step-actions">
+          <button class="step-btn btn-prev" id="btnCheckoutPrev">
+            <i class="fas fa-arrow-left"></i> Anterior
+          </button>
+          <button class="step-btn btn-next" id="btnCheckoutNext">
+            Siguiente <i class="fas fa-arrow-right"></i>
+          </button>
+          <button class="step-btn btn-confirm" id="btnCompleteOrder" style="display: none;">
+            <i class="fas fa-check"></i> Confirmar Compra
+          </button>
+        </div>
+      </div>
+      
+      <div class="checkout-summary">
+        <div class="summary-header">
+          <h3><i class="fas fa-receipt"></i> Resumen de Compra</h3>
+        </div>
+        
+        <div class="summary-items" id="checkout-items">
+          <!-- Los items se cargarán aquí dinámicamente -->
+        </div>
+        
+        <div class="summary-totals">
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="checkout-subtotal">$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Descuento:</span>
+            <span id="checkout-discount">-$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Envío:</span>
+            <span>$0.00</span>
+          </div>
+          <div class="summary-row">
+            <span>Impuestos:</span>
+            <span id="checkout-taxes">$0.00</span>
+          </div>
+          <div class="summary-row final-total">
+            <span>Total:</span>
+            <span id="checkout-total">$0.00</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="coupon">Código de Descuento</label>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" class="form-control" id="coupon" placeholder="Ingresa tu código">
+            <button class="btn" style="background: #f1f5f9;">Aplicar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Historial de Compras -->
+    <div id="history" class="tab-content">
+      <div class="history-container">
+        <div class="history-filters">
+          <button class="history-filter active">Todos</button>
+          <button class="history-filter">Últimos 30 días</button>
+          <button class="history-filter">2023</button>
+          <button class="history-filter">2022</button>
+          <button class="history-filter">Completados</button>
+          <button class="history-filter">Cancelados</button>
+        </div>
+        
+        <div class="history-items" id="history-content">
+          <!-- El historial se cargará aquí dinámicamente -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Datos de muestra para demostración
+    const datosMuestra = [
+      {
+        id: "1",
+        nombre: "Paquete Premium París",
+        destino: "París, Francia",
+        tipo: "Cultural",
+        tipoServicio: "paquete",
+        precio: 1200,
+        duracion: 7,
+        calificacion: 4.5,
+        proveedor: "Aventuras SA",
+        servicios: ["Desayuno", "Wi-Fi", "Tour guiado"],
+        imagen: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+        descripcion: "Disfruta de la ciudad del amor con nuestro paquete premium que incluye alojamiento, tours y más."
+      },
+      {
+        id: "2",
+        nombre: "Combo Playa Cancún",
+        destino: "Cancún, México",
+        tipo: "Playa",
+        tipoServicio: "combo",
+        precio: 850,
+        duracion: 5,
+        calificacion: 4.2,
+        proveedor: "Travel Experts",
+        servicios: ["Desayuno", "Piscina", "Traslado"],
+        imagen: "https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+        descripcion: "Relájate en las mejores playas de México con este combo todo incluido."
+      },
+      {
+        id: "3",
+        nombre: "Hotel Boutique Roma",
+        destino: "Roma, Italia",
+        tipo: "Cultural",
+        tipoServicio: "hospedaje",
+        precio: 150,
+        duracion: 1,
+        calificacion: 4.7,
+        proveedor: "Vacaciones Premium",
+        servicios: ["Desayuno", "Wi-Fi", "Gimnasio"],
+        imagen: "https://images.unsplash.com/photo-1529260830199-42c24126f198?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+        descripcion: "Alojamiento de lujo en el corazón de Roma, cerca de los principales puntos de interés."
+      },
+      {
+        id: "4",
+        nombre: "Vuelo a Nueva York",
+        destino: "Nueva York, USA",
+        tipo: "Negocios",
+        tipoServicio: "vuelo",
+        precio: 450,
+        duracion: 1,
+        calificacion: 4.3,
+        proveedor: "Viajes Económicos",
+        servicios: [],
+        imagen: "https://images.unsplash.com/photo-1553618551-fba689030e27?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+        descripcion: "Vuelo directo a la ciudad que nunca duerme. Incluye equipaje de mano."
+      },
+      {
+        id: "5",
+        nombre: "Alquiler de Auto Deportivo",
+        destino: "Miami, USA",
+        tipo: "Aventura",
+        tipoServicio: "auto",
+        precio: 120,
+        duracion: 1,
+        calificacion: 4.8,
+        proveedor: "Aventuras SA",
+        servicios: [],
+        imagen: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+        descripcion: "Conduce un auto deportivo por las calles de Miami. Seguro incluido."
+      },
+      {
+        id: "6",
+        nombre: "Tour Gastronómico Barcelona",
+        destino: "Barcelona, España",
+        tipo: "Cultural",
+        tipoServicio: "actividad",
+        precio: 75,
+        duracion: 1,
+        calificacion: 4.9,
+        proveedor: "Travel Experts",
+        servicios: ["Tour guiado"],
+        imagen: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+        descripcion: "Descubre la rica gastronomía catalana con nuestro tour guiado por expertos."
+      }
+    ];
+
+    let paquetes = [];
+    let paquetesFiltrados = [];
+    let carrito = [];
+    let categoriaSeleccionada = "todos";
+    let monedaSeleccionada = "USD";
+    let tasaCambio = 1;
+    let currentCheckoutStep = 1;
+
+    // Tasas de cambio (ejemplo)
+    const tasasCambio = {
+      USD: 1,
+      EUR: 0.93,
+      MXN: 16.80,
+      COP: 3900
+    };
+
+    // Símbolos de moneda
+    const simbolosMoneda = {
+      USD: "$",
+      EUR: "€",
+      MXN: "$",
+      COP: "$"
+    };
+
+    // Inicializar la aplicación
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarPaquetes();
+      configurarEventListeners();
+      mostrarResultados(paquetes);
+    });
+
+    // Cargar paquetes desde datos de muestra
+    function cargarPaquetes() {
+      paquetes = datosMuestra;
+      paquetesFiltrados = [...paquetes];
+      actualizarContador(paquetesFiltrados.length);
+    }
+
+    // Configurar todos los event listeners
+    function configurarEventListeners() {
+      // Filtros
+      document.getElementById('btnFiltrar').addEventListener('click', aplicarFiltros);
+      document.getElementById('btnLimpiar').addEventListener('click', limpiarFiltros);
+      document.getElementById('ordenarSelect').addEventListener('change', ordenarResultados);
+      document.getElementById('btnLogout').addEventListener('click', cerrarSesion);
+      document.getElementById('selectorMoneda').addEventListener('change', cambiarMoneda);
+      document.getElementById('toggleAvanzado').addEventListener('click', toggleFiltrosAvanzados);
+      document.getElementById('btnToggleFiltros').addEventListener('click', toggleFiltros);
+      document.getElementById('goToCheckout').addEventListener('click', () => cambiarPestana('checkout'));
+      document.getElementById('btnContinueShopping').addEventListener('click', () => cambiarPestana('explorar'));
+      
+      // Filtro automático al escribir en destino
+      document.getElementById('filtroDestino').addEventListener('input', () => {
+        setTimeout(aplicarFiltros, 300);
+      });
+      
+      // Eventos para categorías
+      document.querySelectorAll('.categoria-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          cambiarCategoria(btn.dataset.categoria);
+        });
+      });
+      
+      // Eventos para pestañas
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          cambiarPestana(tab.dataset.tab);
+        });
+      });
+      
+      // Eventos para métodos de pago
+      document.querySelectorAll('.payment-method').forEach(method => {
+        method.addEventListener('click', () => {
+          document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+          method.classList.add('selected');
+        });
+      });
+      
+      // Eventos para pasos del checkout
+      document.getElementById('btnCheckoutNext').addEventListener('click', nextCheckoutStep);
+      document.getElementById('btnCheckoutPrev').addEventListener('click', prevCheckoutStep);
+      document.getElementById('btnCompleteOrder').addEventListener('click', completarCompra);
+    }
+
+    // Aplicar filtros
+    function aplicarFiltros() {
+      const destino = document.getElementById('filtroDestino').value.toLowerCase();
+      const tipo = document.getElementById('filtroTipo').value;
+      const precioMin = parseFloat(document.getElementById('filtroPrecioMin').value) || 0;
+      const precioMax = parseFloat(document.getElementById('filtroPrecioMax').value) || Infinity;
+      const durMin = parseInt(document.getElementById('filtroDuracionMin').value) || 0;
+      const durMax = parseInt(document.getElementById('filtroDuracionMax').value) || Infinity;
+      const fechaInicio = document.getElementById('filtroFechaInicio').value;
+      const calificacionMin = parseFloat(document.getElementById('filtroCalificacion').value) || 0;
+      const proveedor = document.getElementById('filtroProveedor').value;
+      
+      // Servicios seleccionados
+      const serviciosSeleccionados = [];
+      if (document.getElementById('servicioDesayuno').checked) serviciosSeleccionados.push("Desayuno");
+      if (document.getElementById('servicioWifi').checked) serviciosSeleccionados.push("Wi-Fi");
+      if (document.getElementById('servicioPiscina').checked) serviciosSeleccionados.push("Piscina");
+      if (document.getElementById('servicioGimnasio').checked) serviciosSeleccionados.push("Gimnasio");
+      if (document.getElementById('servicioTraslado').checked) serviciosSeleccionados.push("Traslado");
+      if (document.getElementById('servicioTour').checked) serviciosSeleccionados.push("Tour guiado");
+
+      paquetesFiltrados = paquetes.filter(p => {
+        // Filtro por categoría
+        if (categoriaSeleccionada !== "todos" && p.tipoServicio !== categoriaSeleccionada) {
+          return false;
+        }
+        
+        // Filtro por destino
+        const cumpleDestino = destino === '' || 
+          (p.nombre && p.nombre.toLowerCase().includes(destino)) || 
+          (p.destino && p.destino.toLowerCase().includes(destino));
+        
+        // Filtro por tipo de viaje
+        const cumpleTipo = tipo === '' || (p.tipo && p.tipo === tipo);
+        
+        // Filtro por precio
+        const cumplePrecio = p.precio >= precioMin && p.precio <= precioMax;
+        
+        // Filtro por duración
+        const cumpleDuracion = (p.duracion || 0) >= durMin && (p.duracion || 0) <= durMax;
+        
+        // Filtro por calificación
+        const cumpleCalificacion = calificacionMin === 0 || (p.calificacion || 0) >= calificacionMin;
+        
+        // Filtro por proveedor
+        const cumpleProveedor = proveedor === '' || (p.proveedor && p.proveedor === proveedor);
+        
+        // Filtro por servicios
+        let cumpleServicios = true;
+        if (serviciosSeleccionados.length > 0) {
+          cumpleServicios = serviciosSeleccionados.every(serv => 
+            p.servicios && p.servicios.includes(serv)
+          );
+        }
+        
+        return cumpleDestino && cumpleTipo && cumplePrecio && cumpleDuracion && 
+               cumpleCalificacion && cumpleProveedor && cumpleServicios;
+      });
+
+      ordenarResultados();
+      mostrarResultados(paquetesFiltrados);
+      actualizarContador(paquetesFiltrados.length);
+    }
+
+    // Limpiar filtros
+    function limpiarFiltros() {
+      document.getElementById('filtroDestino').value = '';
+      document.getElementById('filtroTipo').value = '';
+      document.getElementById('filtroPrecioMin').value = '';
+      document.getElementById('filtroPrecioMax').value = '';
+      document.getElementById('filtroDuracionMin').value = '';
+      document.getElementById('filtroDuracionMax').value = '';
+      document.getElementById('filtroFechaInicio').value = '';
+      document.getElementById('filtroCalificacion').value = '0';
+      document.getElementById('filtroProveedor').value = '';
+      
+      // Desmarcar checkboxes de servicios
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+      });
+      
+      // Restablecer categoría
+      document.querySelectorAll('.categoria-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector('.categoria-btn[data-categoria="todos"]').classList.add('active');
+      categoriaSeleccionada = "todos";
+      
+      paquetesFiltrados = [...paquetes];
+      mostrarResultados(paquetesFiltrados);
+      actualizarContador(paquetesFiltrados.length);
+    }
+
+    // Ordenar resultados
+    function ordenarResultados() {
+      const criterio = document.getElementById('ordenarSelect').value;
+      
+      switch(criterio) {
+        case 'precio-asc':
+          paquetesFiltrados.sort((a, b) => a.precio - b.precio);
+          break;
+        case 'precio-desc':
+          paquetesFiltrados.sort((a, b) => b.precio - a.precio);
+          break;
+        case 'duracion-asc':
+          paquetesFiltrados.sort((a, b) => (a.duracion || 0) - (b.duracion || 0));
+          break;
+        case 'duracion-desc':
+          paquetesFiltrados.sort((a, b) => (b.duracion || 0) - (a.duracion || 0));
+          break;
+        case 'calificacion-desc':
+          paquetesFiltrados.sort((a, b) => (b.calificacion || 0) - (a.calificacion || 0));
+          break;
+      }
+      
+      mostrarResultados(paquetesFiltrados);
+    }
+
+    // Mostrar resultados en la página
+    function mostrarResultados(paquetesMostrar) {
+      const resultadosDiv = document.getElementById('resultados');
+      
+      if (paquetesMostrar.length === 0) {
+        resultadosDiv.innerHTML = `
+          <div class="no-resultados">
+            <h3>😔 No se encontraron servicios</h3>
+            <p>Intenta ajustar tus filtros de búsqueda</p>
+          </div>
+        `;
+        return;
+      }
+
+      resultadosDiv.innerHTML = '';
+      
+      paquetesMostrar.forEach(p => {
+        const precioConvertido = (p.precio * tasaCambio).toFixed(2);
+        const claseServicio = `servicio-${p.tipoServicio}`;
+        const nombresServicio = {
+          paquete: "Paquete",
+          combo: "Combo",
+          actividad: "Actividad",
+          hospedaje: "Hospedaje",
+          vuelo: "Vuelo",
+          auto: "Alquiler de Auto"
+        };
+        
+        // Generar estrellas de calificación
+        let estrellas = '';
+        const calificacion = p.calificacion || 0;
+        for (let i = 1; i <= 5; i++) {
+          if (i <= Math.floor(calificacion)) {
+            estrellas += '<i class="fas fa-star"></i>';
+          } else if (i - 0.5 <= calificacion) {
+            estrellas += '<i class="fas fa-star-half-alt"></i>';
+          } else {
+            estrellas += '<i class="far fa-star"></i>';
+          }
+        }
+        
+        const paqueteDiv = document.createElement('div');
+        paqueteDiv.className = 'paquete';
+        paqueteDiv.innerHTML = `
+          ${p.imagen ? `<img src="${p.imagen}" class="portada-preview" alt="${p.nombre}" />` : ''}
+          <div class="paquete-header">
+            <h3 class="paquete-titulo">${p.nombre}</h3>
+            <div class="servicio-tag ${claseServicio}">${nombresServicio[p.tipoServicio] || p.tipoServicio}</div>
+          </div>
+          <div class="calificacion">${estrellas} ${calificacion.toFixed(1)}</div>
+          <div class="paquete-info">
+            ${p.destino ? `<p><i class="fas fa-map-marker-alt"></i> ${p.destino}</p>` : ''}
+            ${p.tipo ? `<p><i class="fas fa-route"></i> ${p.tipo}</p>` : ''}
+            ${p.duracion ? `<p><i class="fas fa-calendar-day"></i> ${p.duracion} días</p>` : ''}
+            ${p.proveedor ? `<p><i class="fas fa-building"></i> ${p.proveedor}</p>` : ''}
+            <p class="paquete-precio">${simbolosMoneda[monedaSeleccionada]}${precioConvertido}</p>
+            <p>${p.descripcion}</p>
+          </div>
+          <div class="paquete-acciones">
+            <button class="btn-add-cart" onclick="agregarAlCarrito('${p.id}')">
+              <i class="fas fa-cart-plus"></i> Añadir
+            </button>
+            <button class="btn-fotos" onclick="verFotos(${JSON.stringify([p.imagen])})">
+              <i class="fas fa-camera"></i>
+            </button>
+          </div>
+        `;
+        resultadosDiv.appendChild(paqueteDiv);
+      });
+    }
+
+    // Agregar al carrito
+    function agregarAlCarrito(idPaquete) {
+      const paquete = paquetes.find(p => p.id === idPaquete);
+      
+      if (!paquete) return;
+      
+      const existente = carrito.find(item => item.id === idPaquete);
+      
+      if (existente) {
+        existente.cantidad++;
+      } else {
+        carrito.push({
+          id: idPaquete,
+          nombre: paquete.nombre,
+          precio: paquete.precio,
+          cantidad: 1
+        });
+      }
+      
+      actualizarCarrito();
+      document.getElementById('cart-count').textContent = 
+        `${carrito.length} servicio${carrito.length !== 1 ? 's' : ''} seleccionado${carrito.length !== 1 ? 's' : ''}`;
+      
+      // Mostrar notificación
+      alert(`¡${paquete.nombre} añadido al carrito!`);
+    }
+
+    // Actualizar vista del carrito
+    function actualizarCarrito() {
+      const carritoContenido = document.getElementById('carritoContenido');
+      let subtotal = 0;
+      let impuestos = 0;
+      let descuento = 0;
+      
+      carritoContenido.innerHTML = '';
+      
+      if (carrito.length === 0) {
+        document.getElementById('cart-count').textContent = "0 servicios seleccionados";
+        return;
+      }
+      
+      carrito.forEach(item => {
+        const precioConvertido = (item.precio * tasaCambio).toFixed(2);
+        const itemTotal = item.precio * item.cantidad * tasaCambio;
+        subtotal += itemTotal;
+        
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'cart-item';
+        itemDiv.innerHTML = `
+          <img src="${paquetes.find(p => p.id === item.id).imagen}" class="item-image" alt="${item.nombre}">
+          <div class="item-details">
+            <div class="item-title">${item.nombre}</div>
+            <div class="item-price">${simbolosMoneda[monedaSeleccionada]}${precioConvertido} x ${item.cantidad}</div>
+            <div class="item-actions">
+              <div class="quantity-control">
+                <button class="btn-quantity minus" onclick="modificarCantidad('${item.id}', -1)">-</button>
+                <span class="quantity">${item.cantidad}</span>
+                <button class="btn-quantity plus" onclick="modificarCantidad('${item.id}', 1)">+</button>
+              </div>
+              <button class="btn-remove" onclick="eliminarDelCarrito('${item.id}')">
+                <i class="fas fa-trash"></i> Eliminar
+              </button>
+            </div>
+          </div>
+        `;
+        carritoContenido.appendChild(itemDiv);
+      });
+      
+      // Calcular impuestos (10% de subtotal)
+      impuestos = subtotal * 0.1;
+      
+      // Calcular total
+      const total = subtotal + impuestos - descuento;
+      
+      // Actualizar resumen
+      document.getElementById('cart-subtotal').textContent = `${simbolosMoneda[monedaSeleccionada]}${subtotal.toFixed(2)}`;
+      document.getElementById('cart-discount').textContent = `${simbolosMoneda[monedaSeleccionada]}${descuento.toFixed(2)}`;
+      document.getElementById('cart-taxes').textContent = `${simbolosMoneda[monedaSeleccionada]}${impuestos.toFixed(2)}`;
+      document.getElementById('cart-total').textContent = `${simbolosMoneda[monedaSeleccionada]}${total.toFixed(2)}`;
+      
+      // Actualizar checkout
+      actualizarCheckout();
+    }
+
+    // Modificar cantidad en carrito
+    function modificarCantidad(idPaquete, cambio) {
+      const item = carrito.find(item => item.id === idPaquete);
+      if (item) {
+        item.cantidad += cambio;
+        if (item.cantidad < 1) item.cantidad = 1;
+        actualizarCarrito();
+      }
+    }
+
+    // Eliminar del carrito
+    function eliminarDelCarrito(idPaquete) {
+      const index = carrito.findIndex(item => item.id === idPaquete);
+      if (index !== -1) {
+        carrito.splice(index, 1);
+        actualizarCarrito();
+      }
+    }
+
+    // Vaciar carrito
+    function vaciarCarrito() {
+      carrito = [];
+      actualizarCarrito();
+    }
+
+    // Actualizar vista de checkout
+    function actualizarCheckout() {
+      const checkoutItems = document.getElementById('checkout-items');
+      let subtotal = 0;
+      let impuestos = 0;
+      let descuento = 0;
+      
+      checkoutItems.innerHTML = '';
+      
+      carrito.forEach(item => {
+        const precioConvertido = (item.precio * tasaCambio).toFixed(2);
+        const itemTotal = item.precio * item.cantidad * tasaCambio;
+        subtotal += itemTotal;
+        
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'summary-item';
+        itemDiv.innerHTML = `
+          <div>${item.nombre} x ${item.cantidad}</div>
+          <div class="summary-price">${simbolosMoneda[monedaSeleccionada]}${itemTotal.toFixed(2)}</div>
+        `;
+        checkoutItems.appendChild(itemDiv);
+      });
+      
+      // Calcular impuestos (10% de subtotal)
+      impuestos = subtotal * 0.1;
+      
+      // Calcular total
+      const total = subtotal + impuestos - descuento;
+      
+      // Actualizar resumen de checkout
+      document.getElementById('checkout-subtotal').textContent = `${simbolosMoneda[monedaSeleccionada]}${subtotal.toFixed(2)}`;
+      document.getElementById('checkout-discount').textContent = `${simbolosMoneda[monedaSeleccionada]}${descuento.toFixed(2)}`;
+      document.getElementById('checkout-taxes').textContent = `${simbolosMoneda[monedaSeleccionada]}${impuestos.toFixed(2)}`;
+      document.getElementById('checkout-total').textContent = `${simbolosMoneda[monedaSeleccionada]}${total.toFixed(2)}`;
+    }
+
+    // Realizar pago
+    function realizarPago() {
+      if (carrito.length === 0) {
+        alert('El carrito está vacío');
+        return;
+      }
+      
+      const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+      const totalConvertido = total * tasaCambio;
+      
+      alert(`¡Pago realizado con éxito por ${simbolosMoneda[monedaSeleccionada]}${totalConvertido.toFixed(2)}!`);
+      
+      // Limpiar carrito
+      vaciarCarrito();
+    }
+
+    // Cerrar sesión
+    function cerrarSesion() {
+      alert('Sesión cerrada');
+      window.location.href = 'inicio1.html';
+    }
+
+    // Ver fotos en modal
+    function verFotos(fotos) {
+      alert("Función de galería de fotos activada. En un entorno real, mostraríamos un carrusel con todas las fotos del servicio.");
+    }
+
+    // Cambiar categoría
+    function cambiarCategoria(categoria) {
+      categoriaSeleccionada = categoria;
+      document.querySelectorAll('.categoria-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`.categoria-btn[data-categoria="${categoria}"]`).classList.add('active');
+      aplicarFiltros();
+    }
+
+    // Cambiar moneda
+    function cambiarMoneda() {
+      monedaSeleccionada = document.getElementById('selectorMoneda').value;
+      tasaCambio = tasasCambio[monedaSeleccionada] || 1;
+      mostrarResultados(paquetesFiltrados);
+      actualizarCarrito();
+    }
+
+    // Toggle filtros avanzados
+    function toggleFiltrosAvanzados() {
+      const avanzados = document.getElementById('filtrosAvanzados');
+      avanzados.classList.toggle('visible');
+      const icono = document.querySelector('#toggleAvanzado i');
+      if (avanzados.classList.contains('visible')) {
+        icono.className = 'fas fa-chevron-up';
+      } else {
+        icono.className = 'fas fa-chevron-down';
+      }
+    }
+
+    // Toggle sección de filtros en móviles
+    function toggleFiltros() {
+      const filtros = document.getElementById('filtrosSection');
+      filtros.classList.toggle('visible');
+    }
+
+    // Cambiar pestañas
+    function cambiarPestana(pestanaId) {
+      // Remover clase activa de todas las pestañas
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      // Añadir clase activa a la pestaña seleccionada
+      document.querySelector(`.nav-tab[data-tab="${pestanaId}"]`).classList.add('active');
+      document.getElementById(pestanaId).classList.add('active');
+      
+      // Si vamos al checkout, reiniciar los pasos
+      if (pestanaId === 'checkout') {
+        currentCheckoutStep = 1;
+        showCheckoutStep(1);
+      }
+      
+      // Actualizar carrito si es necesario
+      if (pestanaId === 'cart' || pestanaId === 'checkout') {
+        actualizarCarrito();
+      }
+    }
+
+    // Mostrar paso actual del checkout
+    function showCheckoutStep(step) {
+      // Actualizar pasos
+      document.querySelectorAll('.step').forEach(s => {
+        s.classList.remove('active', 'completed');
+        if (parseInt(s.dataset.step) < step) {
+          s.classList.add('completed');
+        }
+      });
+      document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+      
+      // Ocultar todos los contenidos de pasos
+      document.querySelectorAll('.step-content').forEach(sc => {
+        sc.classList.remove('active');
+      });
+      
+      // Mostrar el contenido del paso actual
+      document.getElementById(`step-content-${step}`).classList.add('active');
+      
+      // Actualizar botones
+      document.getElementById('btnCheckoutPrev').style.display = step > 1 ? 'inline-flex' : 'none';
+      document.getElementById('btnCheckoutNext').style.display = step < 3 ? 'inline-flex' : 'none';
+      document.getElementById('btnCompleteOrder').style.display = step === 3 ? 'inline-flex' : 'none';
+      
+      // Si es el paso 3, generar el resumen
+      if (step === 3) {
+        generarResumenConfirmacion();
+      }
+    }
+
+    // Avanzar al siguiente paso del checkout
+    function nextCheckoutStep() {
+      if (currentCheckoutStep < 3) {
+        currentCheckoutStep++;
+        showCheckoutStep(currentCheckoutStep);
+      }
+    }
+
+    // Retroceder al paso anterior del checkout
+    function prevCheckoutStep() {
+      if (currentCheckoutStep > 1) {
+        currentCheckoutStep--;
+        showCheckoutStep(currentCheckoutStep);
+      }
+    }
+
+    // Generar resumen para confirmación
+    function generarResumenConfirmacion() {
+      const resumenDiv = document.getElementById('resumen-pedido');
+      resumenDiv.innerHTML = '';
+      
+      // Información personal
+      const nombre = document.querySelector('#step-content-1 input[placeholder="Nombre"]').value;
+      const apellido = document.querySelector('#step-content-1 input[placeholder="Apellido"]').value;
+      const email = document.querySelector('#step-content-1 input[placeholder="Correo electrónico"]').value;
+      
+      const infoPersonal = document.createElement('div');
+      infoPersonal.className = 'resumen-seccion';
+      infoPersonal.innerHTML = `
+        <h4>Información Personal</h4>
+        <p><strong>Nombre:</strong> ${nombre} ${apellido}</p>
+        <p><strong>Email:</strong> ${email}</p>
+      `;
+      resumenDiv.appendChild(infoPersonal);
+      
+      // Dirección
+      const direccion = document.querySelector('#step-content-1 input[placeholder="Dirección completa"]').value;
+      const ciudad = document.querySelector('#step-content-1 input[placeholder="Ciudad"]').value;
+      const codigoPostal = document.querySelector('#step-content-1 input[placeholder="Código postal"]').value;
+      const pais = document.querySelector('#step-content-1 select').value;
+      
+      const infoDireccion = document.createElement('div');
+      infoDireccion.className = 'resumen-seccion';
+      infoDireccion.innerHTML = `
+        <h4>Dirección de Facturación</h4>
+        <p><strong>Dirección:</strong> ${direccion}</p>
+        <p><strong>Ciudad:</strong> ${ciudad}, ${codigoPostal}</p>
+        <p><strong>País:</strong> ${pais}</p>
+      `;
+      resumenDiv.appendChild(infoDireccion);
+      
+      // Método de pago
+      const metodoPago = document.querySelector('#step-content-2 .payment-method.selected span').textContent;
+      
+      const infoPago = document.createElement('div');
+      infoPago.className = 'resumen-seccion';
+      infoPago.innerHTML = `
+        <h4>Método de Pago</h4>
+        <p><strong>Forma de pago:</strong> ${metodoPago}</p>
+      `;
+      resumenDiv.appendChild(infoPago);
+    }
+
+    // Completar compra
+    function completarCompra() {
+      realizarPago();
+      alert('¡Compra completada con éxito! Se ha enviado un correo de confirmación.');
+      cambiarPestana('explorar');
+    }
+
+    // Funciones auxiliares
+    function actualizarContador(cantidad) {
+      document.getElementById('contadorResultados').textContent = 
+        `${cantidad} servicio${cantidad !== 1 ? 's' : ''} encontrado${cantidad !== 1 ? 's' : ''}`;
+    }
+    
+    window.eliminarDelCarrito = eliminarDelCarrito;
+    window.agregarAlCarrito = agregarAlCarrito;
+    window.verFotos = verFotos;
+    window.modificarCantidad = modificarCantidad;
+  </script>
+</body>
+</html>
