@@ -1,0 +1,13 @@
+
+CREATE DATABASE IF NOT EXISTS viajes_db;
+USE viajes_db;
+
+CREATE TABLE IF NOT EXISTS paquetes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(255) NOT NULL,
+  descripcion TEXT,
+  moneda VARCHAR(10),
+  precio DECIMAL(10,2),
+  portada TEXT,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
